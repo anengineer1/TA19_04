@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -16,17 +16,23 @@ public class MyMainWindow extends JFrame {
 	private JLabel label_equal_sign;
 	private JLabel label_current_sign;
 	private JLabel label_sect_description;
+	private JLabel label_about_close_zone;
 	private JButton button_plus;
 	private JButton button_less;
 	private JButton button_product;
 	private JButton button_division;
+	private JButton button_about;
+	private JButton button_close;
 	private ActionListener button_action_sum;
 	private ActionListener button_action_less;
 	private ActionListener button_action_product;
 	private ActionListener button_action_division;
+	private ActionListener button_action_about;
+	private ActionListener button_action_close;
 	private JTextField operando_1;
 	private JTextField operando_2;
 	private JTextField resultado;
+	private JDialog my_about_dialog;
 
 	public MyMainWindow() {
 		initialize();
@@ -52,7 +58,7 @@ public class MyMainWindow extends JFrame {
 		this.addInput();
 
 		// Getting actions
-		this.buttonAddActionSum();
+		this.addButtonsActions();
 
 		// Add the buttons
 		this.addButtons();
@@ -115,6 +121,21 @@ public class MyMainWindow extends JFrame {
 		this.button_division.setBounds(200, 90, 50, 23);
 		this.button_division.addActionListener(this.button_action_division);
 		this.content_pane.add(this.button_division);
+
+		// Zone for closing and About
+		this.label_sect_description = new JLabel("Acerca de/Cerrar:");
+		this.label_sect_description.setBounds(20, 130, 200, 23);
+		this.content_pane.add(this.label_sect_description);
+
+		this.button_about = new JButton("About");
+		this.button_about.setBounds(20, 150, 130, 23);
+		this.button_about.addActionListener(this.button_action_about);
+		this.content_pane.add(this.button_about);
+
+		this.button_close = new JButton("Cerrar");
+		this.button_close.setBounds(180, 150, 130, 23);
+		this.button_close.addActionListener(this.button_action_close);
+		this.content_pane.add(this.button_close);
 	}
 
 	private void actionSum() {
@@ -141,7 +162,7 @@ public class MyMainWindow extends JFrame {
 		this.label_current_sign.setText("/");
 	}
 
-	private void buttonAddActionSum() {
+	private void addButtonsActions() {
 		this.button_action_sum = new ActionListener() {
 
 			@Override
@@ -171,6 +192,23 @@ public class MyMainWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				actionDivision();
+			}
+		};
+
+		this.button_action_close = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		};
+
+		JFrame this_frame = this;
+		this.button_action_about = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				my_about_dialog = new MyAbout(this_frame);
 			}
 		};
 	}
