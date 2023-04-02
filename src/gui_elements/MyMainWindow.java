@@ -2,6 +2,12 @@ package gui_elements;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -10,6 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class MyMainWindow extends JFrame {
 	private JPanel content_pane;
@@ -33,6 +41,7 @@ public class MyMainWindow extends JFrame {
 	private JTextField operando_2;
 	private JTextField resultado;
 	private JDialog my_about_dialog;
+	
 
 	public MyMainWindow() {
 		initialize();
@@ -40,7 +49,7 @@ public class MyMainWindow extends JFrame {
 
 	private void initialize() {
 		this.setTitle("Calculadora");
-		this.setBounds(100, 100, 600, 300);
+		this.setBounds(100, 100, 510, 230);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.fillFrame();
 
@@ -69,11 +78,29 @@ public class MyMainWindow extends JFrame {
 	}
 
 	private void addInput() {
+		// Result
+		this.resultado = new JTextField();
+		this.resultado.setBounds(280, 20, 209, 23);
+		this.resultado.setEditable(false);
+		this.content_pane.add(this.resultado);
 
 		// Left
 		this.operando_1 = new JTextField();
 		this.operando_1.setBounds(20, 20, 110, 23);
 		this.content_pane.add(this.operando_1);
+		
+		// Want to make sure the user writes a double
+		this.operando_1.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                String input = operando_1.getText();
+                Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+                if (!pattern.matcher(input).matches()) {
+                    operando_1.setText("");
+                    resultado.setText("Operando no es double");
+                }
+            }
+        });
 
 		// Label operation type
 		this.label_current_sign = new JLabel("?");
@@ -84,16 +111,25 @@ public class MyMainWindow extends JFrame {
 		this.operando_2 = new JTextField();
 		this.operando_2.setBounds(150, 20, 110, 23);
 		this.content_pane.add(this.operando_2);
+		
+		// Want to make sure the user writes a double
+		this.operando_2.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                String input = operando_2.getText();
+                Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+                if (!pattern.matcher(input).matches()) {
+                    operando_2.setText("");
+                    resultado.setText("Operando no es double");
+                }
+            }
+        });
 
 		// Label Equal
 		this.label_equal_sign = new JLabel("=");
 		this.label_equal_sign.setBounds(265, 20, 10, 23);
 		this.content_pane.add(this.label_equal_sign);
 
-		// Result
-		this.resultado = new JTextField();
-		this.resultado.setBounds(280, 20, 109, 23);
-		this.content_pane.add(this.resultado);
 	}
 
 	private void addButtons() {
@@ -123,17 +159,17 @@ public class MyMainWindow extends JFrame {
 		this.content_pane.add(this.button_division);
 
 		// Zone for closing and About
-		this.label_sect_description = new JLabel("Acerca de/Cerrar:");
-		this.label_sect_description.setBounds(20, 130, 200, 23);
-		this.content_pane.add(this.label_sect_description);
+		this.label_about_close_zone = new JLabel("Acerca de/Cerrar:");
+		this.label_about_close_zone.setBounds(20, 130, 200, 23);
+		this.content_pane.add(this.label_about_close_zone);
 
 		this.button_about = new JButton("About");
-		this.button_about.setBounds(20, 150, 130, 23);
+		this.button_about.setBounds(20, 150, 100, 23);
 		this.button_about.addActionListener(this.button_action_about);
 		this.content_pane.add(this.button_about);
 
 		this.button_close = new JButton("Cerrar");
-		this.button_close.setBounds(180, 150, 130, 23);
+		this.button_close.setBounds(150, 150, 100, 23);
 		this.button_close.addActionListener(this.button_action_close);
 		this.content_pane.add(this.button_close);
 	}
@@ -167,7 +203,12 @@ public class MyMainWindow extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				actionSum();
+				try {
+					actionSum();
+				} catch (NumberFormatException ex) {
+					operando_1.dispatchEvent(new FocusEvent(operando_1, FocusEvent.FOCUS_LOST));
+					operando_2.dispatchEvent(new FocusEvent(operando_2, FocusEvent.FOCUS_LOST));
+				}
 			}
 		};
 
@@ -175,7 +216,12 @@ public class MyMainWindow extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				actionLess();
+				try {
+					actionLess();
+				} catch (NumberFormatException ex) {
+					operando_1.dispatchEvent(new FocusEvent(operando_1, FocusEvent.FOCUS_LOST));
+					operando_2.dispatchEvent(new FocusEvent(operando_2, FocusEvent.FOCUS_LOST));
+				}
 			}
 		};
 
@@ -183,7 +229,12 @@ public class MyMainWindow extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				actionProduct();
+				try {
+					actionProduct();
+				} catch (NumberFormatException ex) {
+					operando_1.dispatchEvent(new FocusEvent(operando_1, FocusEvent.FOCUS_LOST));
+					operando_2.dispatchEvent(new FocusEvent(operando_2, FocusEvent.FOCUS_LOST));
+				}
 			}
 		};
 
@@ -191,7 +242,12 @@ public class MyMainWindow extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				actionDivision();
+				try {
+					actionDivision();
+				} catch (NumberFormatException ex) {
+					operando_1.dispatchEvent(new FocusEvent(operando_1, FocusEvent.FOCUS_LOST));
+					operando_2.dispatchEvent(new FocusEvent(operando_2, FocusEvent.FOCUS_LOST));
+				}
 			}
 		};
 
